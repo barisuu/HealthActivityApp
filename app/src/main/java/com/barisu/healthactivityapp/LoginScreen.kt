@@ -72,6 +72,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit,
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                //navigateToUser()
                 // On click call viewmodel login method and send the ipAddress and password
                       loginViewModel.login(ipAddress,password,adminMode,socketConnection, onSuccess = {
                           onLoginSuccess()

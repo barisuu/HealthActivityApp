@@ -1,4 +1,7 @@
-import android.app.*
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -6,9 +9,6 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.barisu.healthactivityapp.R
 import com.barisu.healthactivityapp.SocketConnection
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class SocketForegroundService : Service() {
     private val channelId = "SocketChannelId"

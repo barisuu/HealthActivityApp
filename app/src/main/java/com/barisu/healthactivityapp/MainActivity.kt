@@ -57,6 +57,8 @@ fun MyApp(){
         composable("user_screen"){
             UserScreen(onSettingsClick = { /*TODO*/ },
                 navigateToChangePassword = {navController.navigate("change_password")},
+                navigateToAnomaly = {/*TODO*/},
+                socketConnection
             )
         }
         composable("change_password"){
@@ -76,9 +78,7 @@ fun MyApp(){
             }
         }
         composable("current_activity"){
-            CurrentActivityScreen( {
-                navController.navigate("admin_screen")
-            },
+            CurrentActivityScreen( { navController.navigate("admin_screen") },
                 socketConnection)
         }
     }

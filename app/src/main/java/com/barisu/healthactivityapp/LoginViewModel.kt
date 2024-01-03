@@ -1,5 +1,9 @@
 
 
+import android.os.Handler
+import android.os.Looper
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.barisu.healthactivityapp.MessageRepository
@@ -9,8 +13,19 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel() : ViewModel() {
 
-    private var messageReceived = ""
+    private val _loginSuccess = MutableLiveData<Boolean>()
+    val loginSuccess: LiveData<Boolean>
+        get() = _loginSuccess
 
+    init {
+        // Observing messageReceived here
+        MessageRepository.messageReceived.observeForever { receivedMessage ->
+            Handler(Looper.getMainLooper()).post {
+                // Update _loginSuccess LiveData upon receiving "connectionsuccess"
+                _loginSuccess.value = receivedMessage == "connectionsuccess"
+            }
+        }
+    }
 
     fun login(
         ipAddress: String,
@@ -34,14 +49,13 @@ class LoginViewModel() : ViewModel() {
                     socketConnection.send(data)
                 }
                 socketConnection.receive()
-                if(MessageRepository.messageReceived.value == "Success"){
-                    onSuccess.invoke()
-                }
-                else{
-                    throw Exception("Couldn't reach.")
-                }
             } catch (e: Exception) {
                 onFailure.invoke()
+            }
+        }
+        loginSuccess.observeForever { success ->
+            if (success) {
+                onSuccess.invoke()
             }
         }
     }

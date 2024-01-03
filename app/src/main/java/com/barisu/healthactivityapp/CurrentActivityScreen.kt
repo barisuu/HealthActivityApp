@@ -31,7 +31,6 @@ fun CurrentActivityScreen(
     activeSocket: SocketConnection
 ){
     val currentActivityViewModel: CurrentActivityViewModel = viewModel()
-
     val currentActivity by currentActivityViewModel.currentActivity.observeAsState("Temp Activity")
     val currentCertainty by currentActivityViewModel.currentCertainty.observeAsState(0)
 
@@ -60,14 +59,21 @@ Column(modifier = Modifier.fillMaxSize(),
                 Text(text = "Detected Activity:")
                 // TODO Implementing connection to get these values
                 LaunchedEffect(key1 = Unit){
-                    currentActivityViewModel.updateActivity(activeSocket)
+                    //currentActivityViewModel.updateActivity(activeSocket)
                 }
                 Text(text = "$currentActivity   $currentCertainty%")
             }
         }
 
     }
-
+    Button(
+        onClick = {
+            currentActivityViewModel.updateActivity(activeSocket) // Trigger update on button click
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+    ) {
+        Text(text = "Refresh Activity", maxLines = 1)
+    }
     Button(onClick = { navigateToMainMenu() },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))) {
         Text(text = "Back to Main Page", maxLines = 1)

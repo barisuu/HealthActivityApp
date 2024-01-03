@@ -13,16 +13,30 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun UserScreen(onSettingsClick: () -> Unit,
-                 navigateToChangePassword: () -> Unit, ) {
+               navigateToChangePassword: () -> Unit,
+               navigateToAnomaly: () -> Unit,
+               activeSocket: SocketConnection) {
+
+
+    val userViewModel: UserScreenViewModel = viewModel()
+
+    val anomaly by userViewModel.anomaly.observeAsState(false)
+
+    if(anomaly){
+        navigateToAnomaly()
+    }
 
     // Column to hold settings button.
     Column(verticalArrangement = Arrangement.Top,

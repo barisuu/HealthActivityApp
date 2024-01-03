@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 val myButtonBGColor = Color(0xFFE5E8E6)
 
@@ -29,6 +30,8 @@ fun AdminScreen(onSettingsClick: () -> Unit,
                 navigateToSensorData: () -> Unit,
                 navigateToCurrentActivity: () -> Unit,
                 activeSocket: SocketConnection){
+
+    val adminScreenViewModel: AdminScreenViewModel = viewModel()
 
     // Column to hold settings button.
     Column(verticalArrangement = Arrangement.Top,
@@ -67,6 +70,7 @@ fun AdminScreen(onSettingsClick: () -> Unit,
             buttonText = "Show Current Activity",
             icon = Icons.Default.Menu
         ) {
+            //adminScreenViewModel.updateActivity(activeSocket,"curAct")
             navigateToCurrentActivity() // Navigating to current activity.
         }
 

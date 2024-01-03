@@ -21,8 +21,6 @@ class CurrentActivityViewModel() : ViewModel() {
 
     private fun observeMessageReceived() {
         MessageRepository.messageReceived.observeForever { message ->
-            // Update UI-related variables or trigger UI update here
-            // For example:
             val (activity, certainty) = parseMessage(message)
             _currentActivity.value = activity
             _currentCertainty.value = certainty
@@ -30,9 +28,7 @@ class CurrentActivityViewModel() : ViewModel() {
     }
 
     private fun parseMessage(message: String): Pair<String, Int> {
-        // Implement logic to parse the received message and extract activity and certainty
-        // Example parsing logic:
-        val parts = message.split("->")
+        val parts = message.split("-")
         val activity = parts[0].trim()
         val certainty = if (parts.size > 1) parts[1].toIntOrNull() ?: 0 else 0
         return activity to certainty
@@ -42,7 +38,13 @@ class CurrentActivityViewModel() : ViewModel() {
         socketConnection: SocketConnection,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            socketConnection.send("CurrentActivity")
+            try {
+                // Assuming your sending function is named 'sendData'
+                socketConnection.send("curAct")
+            } catch (e: Exception) {
+                // Log or handle the exception here
+                e.printStackTrace()
+            }
 
         }
     }

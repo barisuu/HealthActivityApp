@@ -46,7 +46,6 @@ class SocketConnection() : ConnectionInterface {
             }
         }
     }
-    // TODO Fix receive, currently reader isn't receiving any data from the server. Could be a server-side issue
     override suspend fun receive(){
         withContext(Dispatchers.IO){
             try {
