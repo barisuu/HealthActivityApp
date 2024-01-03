@@ -16,7 +16,6 @@ import androidx.navigation.compose.rememberNavController
 import com.androidplot.util.PixelUtils
 
 class MainActivity : ComponentActivity() {
-    val socketConnection = SocketConnection()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val healthApp = application as HealthApp
@@ -34,43 +33,53 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp(){
     val navController = rememberNavController()
+    val socketConnection = SocketConnection()
 
     val isLoggedIn = remember { mutableStateOf(false) }
     // TODO If isLoggedIn is true startDestination is main_screen
     NavHost(navController = navController, startDestination = "login_screen") {
         composable("login_screen") {
             LoginScreen(onLoginSuccess = { isLoggedIn.value = true },
-                navigateToMain = {navController.navigate("main_screen")})
+                navigateToMain = {navController.navigate("admin_screen")},
+                navigateToUser = {navController.navigate("user_screen")},
+                socketConnection)
         }
-        composable("main_screen") {
-            MainScreen(
+        composable("admin_screen") {
+            AdminScreen(
                 onSettingsClick = { /* Handle Settings button click */ },
-                navigateToChangePassword = {navController.navigate("change_password")},
+
                 navigateToRecentActivity = {navController.navigate("recent_activity")},
                 navigateToSensorData = {navController.navigate("sensor_data")},
-                navigateToCurrentActivity = {navController.navigate("current_activity")}
+                navigateToCurrentActivity = {navController.navigate("current_activity")},
+                socketConnection
+            )
+        }
+        composable("user_screen"){
+            UserScreen(onSettingsClick = { /*TODO*/ },
+                navigateToChangePassword = {navController.navigate("change_password")},
             )
         }
         composable("change_password"){
             ChangePasswordScreen(
                 changePasswordViewModel = viewModel(),
-                navigateToMainMenu = {navController.navigate("main_screen")}
+                navigateToMainMenu = {navController.navigate("user_screen")}
             )
         }
         composable("recent_activity"){
             RecentActivityScreen {
-                navController.navigate("main_screen")
+                navController.navigate("admin_screen")
             }
         }
         composable("sensor_data"){
             SensorDataScreen {
-                navController.navigate("main_screen")
+                navController.navigate("admin_screen")
             }
         }
         composable("current_activity"){
             CurrentActivityScreen( {
-                navController.navigate("main_screen")
-            })
+                navController.navigate("admin_screen")
+            },
+                socketConnection)
         }
     }
 }

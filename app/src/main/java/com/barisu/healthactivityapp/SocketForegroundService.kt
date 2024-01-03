@@ -76,7 +76,7 @@ class SocketForegroundService : Service() {
     }
 
     suspend fun receiveData() :String{
-        return (socketConnection.receive())
+        return ""
     }
 
 

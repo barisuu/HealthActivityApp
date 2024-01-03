@@ -16,20 +16,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 val myButtonBGColor = Color(0xFFE5E8E6)
 
 @Composable
-fun MainScreen(onSettingsClick: () -> Unit,
-               navigateToChangePassword: () -> Unit,
-               navigateToRecentActivity: () -> Unit,
-               navigateToSensorData: () -> Unit,
-               navigateToCurrentActivity: () -> Unit,
-               activeSocket: SocketConnection){
+fun AdminScreen(onSettingsClick: () -> Unit,
+                navigateToRecentActivity: () -> Unit,
+                navigateToSensorData: () -> Unit,
+                navigateToCurrentActivity: () -> Unit,
+                activeSocket: SocketConnection){
 
     // Column to hold settings button.
     Column(verticalArrangement = Arrangement.Top,
@@ -79,16 +78,6 @@ fun MainScreen(onSettingsClick: () -> Unit,
             icon = Icons.Default.Menu
         ){
             navigateToSensorData() // Navigating to sensor data screen.
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        ButtonWithIcon(
-            buttonText = "Change Password",
-            icon = Icons.Default.Menu
-        ) {
-            navigateToChangePassword() // Navigating to change password screen.
-
         }
 
     }

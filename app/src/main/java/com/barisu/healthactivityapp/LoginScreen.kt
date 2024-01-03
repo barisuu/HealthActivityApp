@@ -3,6 +3,7 @@ package com.barisu.healthactivityapp
 import LoginViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,10 +28,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit, navigateToMain: () -> Unit) {
+fun LoginScreen(onLoginSuccess: () -> Unit,
+                navigateToMain: () -> Unit,
+                navigateToUser: () -> Unit,
+                socketConnection:SocketConnection
+                ) {
     val loginViewModel: LoginViewModel = viewModel()
     var ipAddress by remember { mutableStateOf("10.0.2.2") }
     var password by remember { mutableStateOf("123") }
+    var adminMode by remember { mutableStateOf(false)}
 
     Column(
         modifier = Modifier
@@ -66,10 +73,14 @@ fun LoginScreen(onLoginSuccess: () -> Unit, navigateToMain: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 // On click call viewmodel login method and send the ipAddress and password
-                      loginViewModel.login(ipAddress,password, onSuccess = {
-
+                      loginViewModel.login(ipAddress,password,adminMode,socketConnection, onSuccess = {
                           onLoginSuccess()
-                          navigateToMain()
+                          if(adminMode){
+                              navigateToMain()
+                          }
+                          else{
+                              navigateToUser()
+                          }
                       }, onFailure = {
                           //TODO display to user that the login failed with the correct error text.
                           println("Login Failed")
@@ -80,5 +91,14 @@ fun LoginScreen(onLoginSuccess: () -> Unit, navigateToMain: () -> Unit) {
         ) {
             Text("Login")
         }
+
+        // User mode Switch
+        Row(verticalAlignment = Alignment.CenterVertically){
+            Text(text = "Admin Mode: ")
+            Switch(checked = adminMode, onCheckedChange = {
+                adminMode = it
+            })
+        }
+
     }
 }

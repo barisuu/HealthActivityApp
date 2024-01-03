@@ -1,6 +1,5 @@
 package com.barisu.healthactivityapp
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,11 +15,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -29,9 +30,11 @@ fun CurrentActivityScreen(
     navigateToMainMenu: () -> Unit,
     activeSocket: SocketConnection
 ){
+    val currentActivityViewModel: CurrentActivityViewModel = viewModel()
 
-    var currentActivity = "Temp Activity"
-    var currentCertainty = 0
+    val currentActivity by currentActivityViewModel.currentActivity.observeAsState("Temp Activity")
+    val currentCertainty by currentActivityViewModel.currentCertainty.observeAsState(0)
+
 
 Column(modifier = Modifier.fillMaxSize(),
     verticalArrangement = Arrangement.Center,
@@ -56,6 +59,9 @@ Column(modifier = Modifier.fillMaxSize(),
                     .background(Color(0xFFCCE7E0))) {
                 Text(text = "Detected Activity:")
                 // TODO Implementing connection to get these values
+                LaunchedEffect(key1 = Unit){
+                    currentActivityViewModel.updateActivity(activeSocket)
+                }
                 Text(text = "$currentActivity   $currentCertainty%")
             }
         }

@@ -8,5 +8,5 @@ interface ConnectionInterface{
     fun connect(address: String, port: Int)
     fun disconnect()
     suspend fun send(data: String)
-    suspend fun receive() : String
+    suspend fun receive()
 }
