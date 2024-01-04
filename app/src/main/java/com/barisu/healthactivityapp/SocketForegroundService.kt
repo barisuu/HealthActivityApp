@@ -1,8 +1,12 @@
 package com.barisu.healthactivityapp
+import android.Manifest
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.IBinder
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,7 +55,7 @@ class SocketForegroundService : Service() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Active")
             .setContentText("Socket is running")
-            .build()//he had "running_channel"
+            .build()
         startForeground(1,notification)
     }
 
@@ -71,7 +75,12 @@ class SocketForegroundService : Service() {
                 val receiveChannel = socketConnection.receive()
                 for (receivedData in receiveChannel) {
                     println("Received data in service is: $receivedData")
-                    MessageRepository.processReceivedData(receivedData)
+                    if(receivedData == "ANOMALY"){
+                        handleAnomaly()
+                    }
+                    else{
+                        MessageRepository.processReceivedData(receivedData)
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -90,6 +99,34 @@ class SocketForegroundService : Service() {
     fun sendData(data: String){
         CoroutineScope(Dispatchers.IO).launch {
             socketConnection.send(data)
+        }
+    }
+
+    fun handleAnomaly(){
+        val notification = NotificationCompat.Builder(this,"socket_channel")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Anomaly")
+            .setContentText("An anomaly has been detected!")
+            .setSmallIcon(R.drawable.ic_anomaly_warning)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        with(NotificationManagerCompat.from(this)){
+            if (ActivityCompat.checkSelfPermission(
+                    this@SocketForegroundService,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            notify(2,notification)
         }
     }
 

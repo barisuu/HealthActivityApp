@@ -22,13 +22,11 @@ import androidx.compose.ui.unit.dp
 
 // Button composable used in mainscreen.
 @Composable
-fun ButtonWithIcon(buttonText: String, icon: ImageVector, onClick: () -> Unit){
+fun ButtonWithIcon(modifier: Modifier = Modifier.fillMaxWidth().height(64.dp),bgColor: Color = myButtonBGColor,buttonText: String, icon: ImageVector, onClick: () -> Unit){
     // Surface to create background
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp),
-        color = myButtonBGColor,
+        modifier = modifier,
+        color = bgColor,
         shape = RoundedCornerShape(20)
 
     ) {

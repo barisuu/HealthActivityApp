@@ -9,37 +9,38 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChangePasswordViewModel : ViewModel() {
-    private var currentPassword: String = "" //TODO to be retrieved from server.
-
-    fun changePassword(
-        newPassword: String,
-        confirmPassword: String,
+class ChangeContactInfoViewModel : ViewModel() {
+    fun changeContactInfo(
+        name: String,
+        surname: String,
+        title: String,
+        telephone: String,
+        address: String,
         context: Context,
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO){
             // Check if passwords match.
-            if (newPassword == confirmPassword) {
-                updatePassword(newPassword,context)
-                withContext(Dispatchers.Main){
-                    onSuccess.invoke()
-                }
-
-            } else {
-                withContext(Dispatchers.Main) {
-                    onError.invoke()
-                }
+            updateContactInfo(name,surname,title,telephone,address,context)
+            withContext(Dispatchers.Main){
+                onSuccess.invoke()
             }
+
+
         }
 
     }
 
-    private fun updatePassword(newPassword: String, context: Context) {
+    private fun updateContactInfo(name: String,
+                                  surname: String,
+                                  title: String,
+                                  telephone: String,
+                                  address: String,
+                                  context: Context) {
         val foregroundServiceIntent = Intent(context,SocketForegroundService::class.java)
         foregroundServiceIntent.action = SocketForegroundService.Actions.SEND_DATA.toString()
-        foregroundServiceIntent.putExtra("DATA", "chgPass-${newPassword}")
+        foregroundServiceIntent.putExtra("DATA", "chgPat-${name}-${surname}-${title}-${telephone}-${address}")
         ContextCompat.startForegroundService(context, foregroundServiceIntent)
     }
 

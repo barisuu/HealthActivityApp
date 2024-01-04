@@ -31,8 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit,
                 navigateToMain: () -> Unit,
-                navigateToUser: () -> Unit,
-                socketConnection:SocketConnection
+                navigateToUser: () -> Unit
                 ) {
     val context = LocalContext.current
     val loginViewModel: LoginViewModel = viewModel()

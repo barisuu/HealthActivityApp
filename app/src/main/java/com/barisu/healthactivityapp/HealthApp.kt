@@ -10,13 +10,22 @@ class HealthApp : Application() {
     override fun onCreate() {
         super.onCreate()
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val channel = NotificationChannel(
+            val constantChannel = NotificationChannel(
                 "socket_channel",
                 "Socket Notifications",
                 NotificationManager.IMPORTANCE_HIGH
             )
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(constantChannel)
+        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val anomalyChannel = NotificationChannel(
+                "anomaly_channel",
+                "Anomaly Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(anomalyChannel)
         }
     }
 }

@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -39,7 +38,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp(){
     val navController = rememberNavController()
-    val socketConnection = SocketConnection()
 
     val isLoggedIn = remember { mutableStateOf(false) }
     // TODO If isLoggedIn is true startDestination is main_screen
@@ -47,8 +45,7 @@ fun MyApp(){
         composable("login_screen") {
             LoginScreen(onLoginSuccess = { isLoggedIn.value = true },
                 navigateToMain = {navController.navigate("admin_screen")},
-                navigateToUser = {navController.navigate("user_screen")},
-                socketConnection)
+                navigateToUser = {navController.navigate("user_screen")})
         }
         composable("admin_screen") {
             AdminScreen(
@@ -56,22 +53,18 @@ fun MyApp(){
 
                 navigateToRecentActivity = {navController.navigate("recent_activity")},
                 navigateToSensorData = {navController.navigate("sensor_data")},
-                navigateToCurrentActivity = {navController.navigate("current_activity")},
-                socketConnection
+                navigateToCurrentActivity = {navController.navigate("current_activity")}
             )
         }
         composable("user_screen"){
             UserScreen(onSettingsClick = { /*TODO*/ },
                 navigateToChangePassword = {navController.navigate("change_password")},
-                navigateToAnomaly = {/*TODO*/},
-                socketConnection
+                navigateToChangeContactInfo = {navController.navigate("change_contact_info")}
             )
         }
         composable("change_password"){
             ChangePasswordScreen(
-                changePasswordViewModel = viewModel(),
-                navigateToMainMenu = {navController.navigate("user_screen")},
-                socketConnection
+                navigateToMainMenu = {navController.navigate("user_screen")}
             )
         }
         composable("recent_activity"){
@@ -85,8 +78,10 @@ fun MyApp(){
             }
         }
         composable("current_activity"){
-            CurrentActivityScreen( { navController.navigate("admin_screen") },
-                socketConnection)
+            CurrentActivityScreen( { navController.navigate("admin_screen") })
+        }
+        composable("change_contact_info"){
+            ChangeContactInfoScreen (navigateToMainMenu = {navController.navigate("user_screen")})
         }
     }
 }

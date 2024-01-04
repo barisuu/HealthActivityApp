@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +30,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun CurrentActivityScreen(
-    navigateToMainMenu: () -> Unit,
-    activeSocket: SocketConnection
+    navigateToMainMenu: () -> Unit
 ){
     val context = LocalContext.current
     val currentActivityViewModel: CurrentActivityViewModel = viewModel()
     val currentActivity by currentActivityViewModel.currentActivity.observeAsState("Temp Activity")
     val currentCertainty by currentActivityViewModel.currentCertainty.observeAsState(0)
+    val key = remember { mutableStateOf(true)}
+
+    if(key.value){
+        LaunchedEffect(true){
+            currentActivityViewModel.updateActivity(context)
+            key.value = false
+        }
+    }
 
 
 Column(modifier = Modifier.fillMaxSize(),
@@ -69,14 +78,18 @@ Column(modifier = Modifier.fillMaxSize(),
     }
     Button(
         onClick = {
-            currentActivityViewModel.updateActivity(context) // Trigger update on button click
+            //currentActivityViewModel.updateActivity(context) // Trigger update on button click
         },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
     ) {
         Text(text = "Refresh Activity", maxLines = 1)
     }
-    Button(onClick = { navigateToMainMenu() },
+    Button(onClick = {
+        currentActivityViewModel.closePage(context)
+        navigateToMainMenu()
+                     },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))) {
+
         Text(text = "Back to Main Page", maxLines = 1)
     }
 }

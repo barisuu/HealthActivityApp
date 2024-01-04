@@ -20,16 +20,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun ChangePasswordScreen(navigateToMainMenu: () -> Unit) {
-    val changePasswordViewModel: ChangePasswordViewModel = viewModel()
-    var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+fun ChangeContactInfoScreen(navigateToMainMenu: () -> Unit)
+{
+    val changeContactInfoViewModel: ChangeContactInfoViewModel = viewModel()
+    var name by remember { mutableStateOf("") }
+    var surname by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") }
+    var telephone by remember { mutableStateOf("") }
+    var homeAddress by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -40,23 +43,51 @@ fun ChangePasswordScreen(navigateToMainMenu: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // New password text field
+        // Name text field
         OutlinedTextField(
-            value = newPassword,
-            onValueChange = { newPassword = it },
-            label = { Text("New Password") },
-            visualTransformation = PasswordVisualTransformation(),
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Name") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password confirmation text field
+        // Surname text field
         OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            visualTransformation = PasswordVisualTransformation(),
+            value = surname,
+            onValueChange = { surname = it },
+            label = { Text("Surname") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Title text field TODO change into dropdown box
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("Title") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Telephone text field
+        OutlinedTextField(
+            value = telephone,
+            onValueChange = { telephone = it },
+            label = { Text("Telephone") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Home address text field
+        OutlinedTextField(
+            value = homeAddress,
+            onValueChange = { homeAddress = it },
+            label = { Text("Address") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -66,28 +97,29 @@ fun ChangePasswordScreen(navigateToMainMenu: () -> Unit) {
         Button(
             // On click, send data to the viewmodel to check if passwords match.
             onClick = {
-                    changePasswordViewModel.changePassword(newPassword, confirmPassword,context,
-                        onSuccess = {
-                            // On success navigate to main menu.
-                            navigateToMainMenu()
-                        },
-                        onError = {
-                            // On error, set error text, TODO send custom text from viewmodel
-                            errorText = "Passwords don't match"
-                        }
-                    )
+                changeContactInfoViewModel.changeContactInfo(name,surname,title,telephone,homeAddress,context,
+                    onSuccess = {
+                        // On success navigate to main menu.
+                        navigateToMainMenu()
+                    },
+                    onError = {
+                        // On error, set error text, TODO send custom text from viewmodel
+                        errorText = "Passwords don't match"
+                    }
+                )
 
 
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
         ) {
-            Text("Change Password")
+            Text("Change Contact Info")
         }
-        Button(onClick = {
-            changePasswordViewModel.closePage(context)
+        Button(
+            onClick = {
+            changeContactInfoViewModel.closePage(context)
             navigateToMainMenu()
-                         },
+                      },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))) {
             Text(text = "Return to Main Page")

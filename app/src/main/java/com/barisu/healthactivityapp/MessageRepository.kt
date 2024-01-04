@@ -9,6 +9,7 @@ object MessageRepository {
         get() = _messageReceived
 
     fun processReceivedData(data: String) {
+        println("Processing received data : $data")
         _messageReceived.postValue(data)
     }
 }

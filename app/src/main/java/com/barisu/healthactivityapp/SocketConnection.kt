@@ -29,7 +29,6 @@ class SocketConnection() : ConnectionInterface {
             client = Socket(address,8888)
             writer = OutputStreamWriter(client.getOutputStream())
             reader = BufferedReader(InputStreamReader(client.getInputStream()))
-            println("Reader init test")
 
             startReceiving()
         }.start()
@@ -65,8 +64,8 @@ class SocketConnection() : ConnectionInterface {
         receiveJob = CoroutineScope(Dispatchers.IO).launch {
             try {
                 while (true) {
+                    println("Reader listening again.")
                     val data = reader.readLine() ?: break
-                    println("Reader output: $data" )
                     receiveChannel.send(data)
                 }
             } catch (e: Exception) {
