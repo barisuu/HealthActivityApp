@@ -1,6 +1,10 @@
 package com.barisu.healthactivityapp
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -10,6 +14,10 @@ import java.net.Socket
 // Implementation of sockets to establish connection.
 
 class SocketConnection() : ConnectionInterface {
+
+    private val receiveChannel = Channel<String>()
+
+    private lateinit var receiveJob: Job
     private lateinit var client : Socket
     private lateinit var writer : OutputStreamWriter
     private lateinit var reader : BufferedReader
@@ -21,6 +29,9 @@ class SocketConnection() : ConnectionInterface {
             client = Socket(address,8888)
             writer = OutputStreamWriter(client.getOutputStream())
             reader = BufferedReader(InputStreamReader(client.getInputStream()))
+            println("Reader init test")
+
+            startReceiving()
         }.start()
 
     }
@@ -46,18 +57,28 @@ class SocketConnection() : ConnectionInterface {
             }
         }
     }
-    override suspend fun receive(){
-        withContext(Dispatchers.IO){
+    override suspend fun receive(): Channel<String>{
+        return receiveChannel
+    }
+
+    private fun startReceiving() {
+        receiveJob = CoroutineScope(Dispatchers.IO).launch {
             try {
                 while (true) {
-                    println("Trying to receive data")
                     val data = reader.readLine() ?: break
-                    println("Received data: $data")
-                    MessageRepository.processReceivedData(data)
+                    println("Reader output: $data" )
+                    receiveChannel.send(data)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                receiveChannel.close()
             }
         }
+    }
+
+    fun parseMessage(receivedData : String) : String{
+        var splitData = receivedData.split("-")
+        return splitData[0]
     }
 }

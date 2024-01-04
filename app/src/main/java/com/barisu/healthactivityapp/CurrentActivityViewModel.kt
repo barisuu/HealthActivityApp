@@ -1,11 +1,11 @@
 package com.barisu.healthactivityapp
 
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class CurrentActivityViewModel() : ViewModel() {
 
@@ -34,19 +34,18 @@ class CurrentActivityViewModel() : ViewModel() {
         return activity to certainty
     }
 
-    fun updateActivity(
-        socketConnection: SocketConnection,
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                // Assuming your sending function is named 'sendData'
-                socketConnection.send("curAct")
-            } catch (e: Exception) {
-                // Log or handle the exception here
-                e.printStackTrace()
-            }
+    fun updateActivity(context: Context) {
+        val foregroundServiceIntent = Intent(context,SocketForegroundService::class.java)
+        foregroundServiceIntent.action = SocketForegroundService.Actions.SEND_DATA.toString()
+        foregroundServiceIntent.putExtra("DATA", "curAct")
+        ContextCompat.startForegroundService(context, foregroundServiceIntent)
+    }
 
-        }
+    fun closePage(context: Context){
+        val foregroundServiceIntent = Intent(context,SocketForegroundService::class.java)
+        foregroundServiceIntent.action = SocketForegroundService.Actions.SEND_DATA.toString()
+        foregroundServiceIntent.putExtra("DATA", "close")
+        ContextCompat.startForegroundService(context, foregroundServiceIntent)
     }
 }
 

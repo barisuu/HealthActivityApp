@@ -3,6 +3,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SocketForegroundService : Service() {
     private val channelId = "SocketChannelId"
@@ -21,9 +24,26 @@ class SocketForegroundService : Service() {
         when(intent?.action){
             Actions.START.toString() -> start()
             Actions.STOP.toString() -> stopSelf()
+            Actions.SEND_LOGIN_DATA.toString() -> {
+                val ipAddress = intent.getStringExtra("IPADDRESS")
+                val password = intent.getStringExtra("PASSWORD")
+                val userType = intent.getStringExtra("USERTYPE")
+                if (ipAddress != null && password != null && userType != null){
+                    loginUser(ipAddress,password,userType)
+                }
+            }
+            Actions.SEND_DATA.toString() ->{
+                val data = intent.getStringExtra("DATA")
+                if(data != null){
+                    sendData(data)
+                }
+            }
         }
         isRunning = true
         return super.onStartCommand(intent, flags, startId)
+    }
+    enum class Actions{
+        START,SEND_LOGIN_DATA,SEND_DATA,STOP
     }
 
     private fun start(){
@@ -35,10 +55,30 @@ class SocketForegroundService : Service() {
         startForeground(1,notification)
     }
 
-    enum class Actions{
-        START,STOP
+
+
+    fun loginUser(ipAddress: String, password: String, userType: String){
+        val loginData = "${userType}-${password}"
+
+        connectToServer(ipAddress,8888)
+        sendData(loginData)
+        startListening()
     }
 
+    fun startListening(){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val receiveChannel = socketConnection.receive()
+                for (receivedData in receiveChannel) {
+                    println("Received data in service is: $receivedData")
+                    MessageRepository.processReceivedData(receivedData)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Handle exceptions or connection errors
+            }
+        }
+    }
     fun connectToServer(address: String, port: Int){
         socketConnection.connect(address,port)
     }
@@ -47,12 +87,10 @@ class SocketForegroundService : Service() {
         socketConnection.disconnect()
     }
 
-    suspend fun sendData(data: String){
-        socketConnection.send(data)
-    }
-
-    suspend fun receiveData() :String{
-        return ""
+    fun sendData(data: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            socketConnection.send(data)
+        }
     }
 
 

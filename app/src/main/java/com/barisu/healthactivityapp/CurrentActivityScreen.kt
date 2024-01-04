@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -30,6 +31,7 @@ fun CurrentActivityScreen(
     navigateToMainMenu: () -> Unit,
     activeSocket: SocketConnection
 ){
+    val context = LocalContext.current
     val currentActivityViewModel: CurrentActivityViewModel = viewModel()
     val currentActivity by currentActivityViewModel.currentActivity.observeAsState("Temp Activity")
     val currentCertainty by currentActivityViewModel.currentCertainty.observeAsState(0)
@@ -59,7 +61,6 @@ Column(modifier = Modifier.fillMaxSize(),
                 Text(text = "Detected Activity:")
                 // TODO Implementing connection to get these values
                 LaunchedEffect(key1 = Unit){
-                    //currentActivityViewModel.updateActivity(activeSocket)
                 }
                 Text(text = "$currentActivity   $currentCertainty%")
             }
@@ -68,7 +69,7 @@ Column(modifier = Modifier.fillMaxSize(),
     }
     Button(
         onClick = {
-            currentActivityViewModel.updateActivity(activeSocket) // Trigger update on button click
+            currentActivityViewModel.updateActivity(context) // Trigger update on button click
         },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
     ) {

@@ -1,14 +1,15 @@
 
 
+import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.barisu.healthactivityapp.MessageRepository
-import com.barisu.healthactivityapp.SocketConnection
-import kotlinx.coroutines.launch
+import com.barisu.healthactivityapp.SocketForegroundService
 
 
 class LoginViewModel() : ViewModel() {
@@ -31,33 +32,28 @@ class LoginViewModel() : ViewModel() {
         ipAddress: String,
         password: String,
         adminMode: Boolean,
-        socketConnection: SocketConnection,
+        context: Context,
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     ) {
-        viewModelScope.launch {
-            try {
-                // Try to connect to the server, and send the password send the password to verify.
-                socketConnection.connect(ipAddress, 8888)
-                var data = ""
-                if(adminMode){
-                    data = "admin-${password}"
-                    socketConnection.send(data)
-                }
-                else{
-                    data = "user-${password}"
-                    socketConnection.send(data)
-                }
-                socketConnection.receive()
-            } catch (e: Exception) {
-                onFailure.invoke()
-            }
+        val foregroundServiceIntent = Intent(context,SocketForegroundService::class.java)
+        foregroundServiceIntent.action = SocketForegroundService.Actions.SEND_LOGIN_DATA.toString()
+        foregroundServiceIntent.putExtra("IPADDRESS", ipAddress)
+        foregroundServiceIntent.putExtra("PASSWORD", password)
+        if (adminMode){
+            foregroundServiceIntent.putExtra("USERTYPE", "admin")
         }
+        else{
+            foregroundServiceIntent.putExtra("USERTYPE", "user")
+        }
+        ContextCompat.startForegroundService(context, foregroundServiceIntent)
+
         loginSuccess.observeForever { success ->
             if (success) {
                 onSuccess.invoke()
             }
         }
+
     }
 }
 

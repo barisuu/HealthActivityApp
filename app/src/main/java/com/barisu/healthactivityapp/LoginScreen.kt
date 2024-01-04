@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,6 +34,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit,
                 navigateToUser: () -> Unit,
                 socketConnection:SocketConnection
                 ) {
+    val context = LocalContext.current
     val loginViewModel: LoginViewModel = viewModel()
     var ipAddress by remember { mutableStateOf("10.0.2.2") }
     var password by remember { mutableStateOf("123") }
@@ -74,7 +76,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit,
             onClick = {
                 //navigateToUser()
                 // On click call viewmodel login method and send the ipAddress and password
-                      loginViewModel.login(ipAddress,password,adminMode,socketConnection, onSuccess = {
+                      loginViewModel.login(ipAddress, password, adminMode, context, onSuccess = {
                           onLoginSuccess()
                           if(adminMode){
                               navigateToMain()
