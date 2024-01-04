@@ -1,14 +1,15 @@
 package com.barisu.healthactivityapp
 
-import SocketForegroundService
+import android.Manifest.permission
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.core.content.ContextCompat
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,13 +19,18 @@ import com.androidplot.util.PixelUtils
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val healthApp = application as HealthApp
         PixelUtils.init(this)
-        if (!healthApp.socketForegroundService.isServiceRunning()) {
-            val serviceIntent = Intent(this, SocketForegroundService::class.java)
-            ContextCompat.startForegroundService(this, serviceIntent)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            ActivityCompat.requestPermissions(this,
+                arrayOf(permission.POST_NOTIFICATIONS),
+                0)
         }
         setContent {
+            println("Trying to start service.")
+            Intent(applicationContext, SocketForegroundService::class.java).also {
+                it.action = SocketForegroundService.Actions.START.toString()
+                startService(it)
+            }
             MyApp()
         }
     }
@@ -64,7 +70,8 @@ fun MyApp(){
         composable("change_password"){
             ChangePasswordScreen(
                 changePasswordViewModel = viewModel(),
-                navigateToMainMenu = {navController.navigate("user_screen")}
+                navigateToMainMenu = {navController.navigate("user_screen")},
+                socketConnection
             )
         }
         composable("recent_activity"){

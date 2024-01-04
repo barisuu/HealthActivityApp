@@ -1,6 +1,10 @@
 package com.barisu.healthactivityapp
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChangePasswordViewModel : ViewModel() {
     private var currentPassword: String = "" //TODO to be retrieved from server.
@@ -8,20 +12,29 @@ class ChangePasswordViewModel : ViewModel() {
     fun changePassword(
         newPassword: String,
         confirmPassword: String,
+        activeSocket: SocketConnection,
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
-        // Check if passwords match.
-        if (newPassword == confirmPassword) {
-            updatePassword(newPassword)
-            onSuccess.invoke()
-        } else {
-            onError.invoke()
+        viewModelScope.launch(Dispatchers.IO){
+            // Check if passwords match.
+            if (newPassword == confirmPassword) {
+                updatePassword(newPassword,activeSocket)
+                withContext(Dispatchers.Main){
+                    onSuccess.invoke()
+                }
+
+            } else {
+                withContext(Dispatchers.Main) {
+                    onError.invoke()
+                }
+            }
         }
+
     }
 
-    private fun updatePassword(newPassword: String) {
-        // TODO new password will be sent to the server.
+    private suspend fun updatePassword(newPassword: String, activeSocket: SocketConnection) {
+        activeSocket.send("chgPass-${newPassword}")
         currentPassword = newPassword
     }
 }

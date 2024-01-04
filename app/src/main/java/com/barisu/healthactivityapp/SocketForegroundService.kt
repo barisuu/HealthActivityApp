@@ -1,14 +1,8 @@
-
-import android.app.NotificationChannel
-import android.app.NotificationManager
+package com.barisu.healthactivityapp
 import android.app.Service
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.barisu.healthactivityapp.R
-import com.barisu.healthactivityapp.SocketConnection
 
 class SocketForegroundService : Service() {
     private val channelId = "SocketChannelId"
@@ -19,48 +13,30 @@ class SocketForegroundService : Service() {
     // Socket connection
     private val socketConnection = SocketConnection()
 
-    override fun onCreate() {
-        super.onCreate()
-        println("Created service")
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createNotificationChannel()
-        startForegroundService()
-        isRunning = true
-        println("Started service")
-        return START_STICKY
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            notificationManager.createNotificationChannel(channel)
+        when(intent?.action){
+            Actions.START.toString() -> start()
+            Actions.STOP.toString() -> stopSelf()
         }
+        isRunning = true
+        return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun startForegroundService() {
-        val channelId = "SocketChannelId"
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Health Tracker")
-            .setContentText("Socket Service is running")
+    private fun start(){
+        val notification = NotificationCompat.Builder(this,"socket_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-        // Add any additional configurations to the notification
-
-        val notification = notificationBuilder.build()
-        startForeground(1, notification)
+            .setContentTitle("Active")
+            .setContentText("Socket is running")
+            .build()//he had "running_channel"
+        startForeground(1,notification)
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    enum class Actions{
+        START,STOP
     }
 
     fun connectToServer(address: String, port: Int){

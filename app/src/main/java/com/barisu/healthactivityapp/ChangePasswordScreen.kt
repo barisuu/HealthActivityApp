@@ -25,7 +25,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun ChangePasswordScreen(changePasswordViewModel: ChangePasswordViewModel = viewModel(),navigateToMainMenu: () -> Unit) {
+fun ChangePasswordScreen(changePasswordViewModel: ChangePasswordViewModel = viewModel(),
+                         navigateToMainMenu: () -> Unit,
+                         activeSocket:SocketConnection) {
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf("") }
@@ -63,16 +65,18 @@ fun ChangePasswordScreen(changePasswordViewModel: ChangePasswordViewModel = view
         Button(
             // On click, send data to the viewmodel to check if passwords match.
             onClick = {
-                changePasswordViewModel.changePassword(newPassword, confirmPassword,
-                    onSuccess = {
-                        // On success navigate to main menu.
-                        navigateToMainMenu()
-                    },
-                    onError = {
-                        // On error, set error text, TODO send custom text from viewmodel
-                        errorText = "Passwords don't match"
-                    }
-                )
+                    changePasswordViewModel.changePassword(newPassword, confirmPassword,activeSocket,
+                        onSuccess = {
+                            // On success navigate to main menu.
+                            navigateToMainMenu()
+                        },
+                        onError = {
+                            // On error, set error text, TODO send custom text from viewmodel
+                            errorText = "Passwords don't match"
+                        }
+                    )
+
+
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
