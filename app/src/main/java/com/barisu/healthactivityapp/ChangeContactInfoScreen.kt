@@ -1,14 +1,26 @@
 package com.barisu.healthactivityapp
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,9 +43,13 @@ fun ChangeContactInfoScreen(navigateToMainMenu: () -> Unit)
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
-    var telephone by remember { mutableStateOf("") }
-    var homeAddress by remember { mutableStateOf("") }
+    var telephone by remember { mutableStateOf("5333333333") }
+    var homeAddress by remember { mutableStateOf("Kalkanlı Güzelyurt") }
     var errorText by remember { mutableStateOf("") }
+
+    var expanded by remember { mutableStateOf(false) }
+    val options = listOf("Mr.", "Mrs.", "Other")
+
     val context = LocalContext.current
 
     Column(
@@ -63,13 +79,41 @@ fun ChangeContactInfoScreen(navigateToMainMenu: () -> Unit)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Title text field TODO change into dropdown box
-        OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.TopEnd)
+                .clickable { expanded = !expanded }
+        ) {
+            Row(modifier = Modifier.fillMaxWidth().border(1.dp,Color.Gray,shape = RoundedCornerShape(10)),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically) {
+
+
+                Text(modifier=Modifier.padding(16.dp),text = "Title : ${title}")
+                
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "More"
+                    )
+                }
+            }
+            
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(text = { Text(text = option) }, onClick = {
+                        title = option
+                        expanded = false
+                    })
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

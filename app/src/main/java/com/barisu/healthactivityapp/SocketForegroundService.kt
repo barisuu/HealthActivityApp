@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SocketForegroundService : Service() {
@@ -98,6 +99,7 @@ class SocketForegroundService : Service() {
 
     fun sendData(data: String){
         CoroutineScope(Dispatchers.IO).launch {
+            delay(100)
             socketConnection.send(data)
         }
     }

@@ -32,7 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 // Item class
@@ -44,6 +46,9 @@ data class SensorGroup(
 
 @Composable
 fun SensorDataScreen(navigateToMainMenu:() -> Unit){
+    val context = LocalContext.current
+    val sensorDataViewModel: SensorDataViewModel = viewModel()
+    var data = sensorDataViewModel.getSensorData(context)
     // Variable to hold item list
     val tempList = listOf<SensorGroup>(SensorGroup(1,"Test1"),
         SensorGroup(2,"Test2"),

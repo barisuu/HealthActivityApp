@@ -26,6 +26,7 @@ class SocketConnection() : ConnectionInterface {
     // Generates the writer and reader to send and receive data.
     override fun connect(address: String, port: Int) {
         Thread{
+            print("Login data is being sent to the server.")
             client = Socket(address,8888)
             writer = OutputStreamWriter(client.getOutputStream())
             reader = BufferedReader(InputStreamReader(client.getInputStream()))
@@ -52,7 +53,7 @@ class SocketConnection() : ConnectionInterface {
                 writer.write(data)
                 writer.flush()
             } catch (e: Exception) {
-                //TODO What to do when failure to send data.
+                throw e
             }
         }
     }

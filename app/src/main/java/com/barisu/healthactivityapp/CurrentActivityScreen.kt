@@ -68,21 +68,12 @@ Column(modifier = Modifier.fillMaxSize(),
                     .clip(RoundedCornerShape(20))
                     .background(Color(0xFFCCE7E0))) {
                 Text(text = "Detected Activity:")
-                // TODO Implementing connection to get these values
                 LaunchedEffect(key1 = Unit){
                 }
                 Text(text = "$currentActivity   $currentCertainty%")
             }
         }
 
-    }
-    Button(
-        onClick = {
-            //currentActivityViewModel.updateActivity(context) // Trigger update on button click
-        },
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
-    ) {
-        Text(text = "Refresh Activity", maxLines = 1)
     }
     Button(onClick = {
         currentActivityViewModel.closePage(context)

@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +36,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit,
                 ) {
     val context = LocalContext.current
     val loginViewModel: LoginViewModel = viewModel()
-    var ipAddress by remember { mutableStateOf("10.0.2.2") }
+    var ipAddress by remember { mutableStateOf("192.168.137.26") }
     var password by remember { mutableStateOf("123") }
     var adminMode by remember { mutableStateOf(false)}
 
@@ -97,7 +98,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit,
         // User mode Switch
         Row(verticalAlignment = Alignment.CenterVertically){
             Text(text = "Admin Mode: ")
-            Switch(checked = adminMode, onCheckedChange = {
+            Switch(checked = adminMode, colors = SwitchDefaults.colors(
+                checkedTrackColor = Color(0xFF2196F3)
+            ), onCheckedChange = {
                 adminMode = it
             })
         }

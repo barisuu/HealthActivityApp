@@ -31,6 +31,9 @@ class CurrentActivityViewModel() : ViewModel() {
         val parts = message.split("-")
         val activity = parts[0].trim()
         val certainty = if (parts.size > 1) parts[1].toIntOrNull() ?: 0 else 0
+        if(activity == "connectionsuccess"){
+            return "" to 0
+        }
         return activity to certainty
     }
 

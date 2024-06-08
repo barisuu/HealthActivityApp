@@ -50,7 +50,6 @@ fun MyApp(){
         composable("admin_screen") {
             AdminScreen(
                 onSettingsClick = { /* Handle Settings button click */ },
-
                 navigateToRecentActivity = {navController.navigate("recent_activity")},
                 navigateToSensorData = {navController.navigate("sensor_data")},
                 navigateToCurrentActivity = {navController.navigate("current_activity")}
